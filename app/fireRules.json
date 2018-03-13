@@ -1,0 +1,38 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "business": {
+      "$business": {
+        // /foo is readable by the world
+      ".read": true,
+
+      // /foo is writable by the world
+      ".write": true,
+
+      // a valid widget must have attributes "color" and "size"
+      ".validate": "newData.hasChildren(['number', 'name', 'primBusiness'])",
+      "number": {
+        // the length of number has to be 9 digits
+        ".validate": "newData.isString() && newData.val().length == 9"
+      },
+      "name": {
+        // the length of name is 2 - 48 characters
+        ".validate": "newData.isString() && newData.val().length > 1 && newData.val().length < 49"
+      },
+      "primBusiness": {
+        // must match cases
+        ".validate": "root.child('valid_business/' + newData.val()).exists()"
+      },
+      "address":{
+        // the length of address is less than 50
+        ".validate": "newData.isString() && newData.val().length < 50"
+      },
+      "province":{
+        // must match cases
+        ".validate": "root.child('valid_province/' + newData.val()).exists()"
+      }
+      }
+    }
+  }
+}
