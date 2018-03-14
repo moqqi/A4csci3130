@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class Business implements Serializable {
 
+    public String businessID;
     public  String number;
     public  String name;
     public String primBusiness;
@@ -24,7 +25,8 @@ public class Business implements Serializable {
         // Default constructor required for calls to DataSnapshot.getValue
     }
 
-    public Business(String number, String name, String primBusiness, String address, String province) {
+    public Business(String bID, String number, String name, String primBusiness, String address, String province) {
+        this.businessID = bID;
         this.number = number;
         this.name = name;
         this.primBusiness = primBusiness;
@@ -46,4 +48,6 @@ public class Business implements Serializable {
         }
         return result;
     }
+
+
 }

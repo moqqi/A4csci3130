@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
 
     public void createBusinessButton(View v)
     {
-        Intent intent=new Intent(this, CreateBusinessAcitivity.class);
+        Intent intent = new Intent(this, CreateBusinessAcitivity.class);
         startActivity(intent);
     }
 
