@@ -11,12 +11,21 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Main activity class used to view the listview of Business'
+ * that exist in Database.
+ */
 public class MainActivity extends Activity {
 
 
-    private ListView contactListView;
-    private FirebaseListAdapter<Contact> firebaseAdapter;
+    private ListView businessListView;
+    private FirebaseListAdapter<Business> firebaseAdapter;
 
+    /**
+     * Creates Listview and initializes onClick event firingthe detail view.
+     * Also initializes the reference to Firebase, and Create Business button.
+     * @param savedInstanceState Current Instance of app that calls super onCreate.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,41 +36,51 @@ public class MainActivity extends Activity {
 
         //Set-up Firebase
         appData.firebaseDBInstance = FirebaseDatabase.getInstance();
-        appData.firebaseReference = appData.firebaseDBInstance.getReference("contacts");
+        appData.firebaseReference = appData.firebaseDBInstance.getReference("business");
 
         //Get the reference to the UI contents
-        contactListView = (ListView) findViewById(R.id.listView);
+        businessListView = (ListView) findViewById(R.id.listView);
 
         //Set up the List View
-       firebaseAdapter = new FirebaseListAdapter<Contact>(this, Contact.class,
+        firebaseAdapter = new FirebaseListAdapter<Business>(this, Business.class,
                 android.R.layout.simple_list_item_1, appData.firebaseReference) {
             @Override
-            protected void populateView(View v, Contact model, int position) {
-                TextView contactName = (TextView)v.findViewById(android.R.id.text1);
-                contactName.setText(model.name);
+            protected void populateView(View v, Business model, int position) {
+                TextView businessName = (TextView)v.findViewById(android.R.id.text1);
+                businessName.setText(model.name);
             }
         };
-        contactListView.setAdapter(firebaseAdapter);
-        contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            // onItemClick method is called everytime a user clicks an item on the list
+        businessListView.setAdapter(firebaseAdapter);
+        businessListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            // onItemClick method is call everytime a user clicks an item on the list
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Contact person = (Contact) firebaseAdapter.getItem(position);
+                Business person = (Business) firebaseAdapter.getItem(position);
                 showDetailView(person);
             }
         });
     }
 
-    public void createContactButton(View v)
+    /**
+     * Action taken when user clicked Create Business button, opens the
+     * Create Business Activity.
+     * @param v Current view of activity.
+     */
+    public void createBusinessButton(View v)
     {
-        Intent intent=new Intent(this, CreateContactAcitivity.class);
+        Intent intent = new Intent(this, CreateBusinessAcitivity.class);
         startActivity(intent);
     }
 
-    private void showDetailView(Contact person)
+    /**
+     *
+     * @param person Currently clicked business that user wishes to view in
+     *               Detail Activity.
+     */
+    private void showDetailView(Business person)
     {
         Intent intent = new Intent(this, DetailViewActivity.class);
-        intent.putExtra("Contact", person);
+        intent.putExtra("Business", person);
         startActivity(intent);
     }
 

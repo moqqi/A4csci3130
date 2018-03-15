@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -11,91 +12,63 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Class used for Viewing, updating, and erasing existing Business.
+ * Class used for creating the Business based
+ * on user input.
  */
-public class DetailViewActivity extends Activity {
+public class CreateBusinessAcitivity extends Activity {
 
+    private Button submitButton;
     private EditText nameField, primBusinessField, addressField, provinceField, numberField;
-    Business receivedPersonInfo;
-
-    private MyApplicationData appData;
+    private MyApplicationData appState;
 
     /**
-     * Creates a detailed view of Business information.  User is able
-     * to update information based on the initialized data in the text views.
-     * @param savedInstanceState saved instance of application used to call super
-     *                           onCreate.
-     * @return
+     * Creates a detailed view of Business information required for input.  User is able
+     * to input information to be used by submitInfoButton().
+     * @param savedInstanceState Used to call the super onCreate method.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        appData = (MyApplicationData)getApplication();
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail_view);
-        receivedPersonInfo = (Business)getIntent().getSerializableExtra("Business");
-
+        setContentView(R.layout.activity_create_contact_acitivity);
+        //Get the app wide shared variables
+        appState = ((MyApplicationData) getApplicationContext());
+        submitButton = (Button) findViewById(R.id.submitButton);
         numberField = (EditText) findViewById(R.id.number);
         nameField = (EditText) findViewById(R.id.name);
         primBusinessField = (EditText) findViewById(R.id.primBusiness);
         addressField = (EditText) findViewById(R.id.address);
         provinceField = (EditText) findViewById(R.id.province);
 
-        if(receivedPersonInfo != null){
-            numberField.setText(receivedPersonInfo.number);
-            nameField.setText(receivedPersonInfo.name);
-            primBusinessField.setText(receivedPersonInfo.primBusiness);
-            if(receivedPersonInfo.address != null){
-                addressField.setText(receivedPersonInfo.address);
-            }
-            if(receivedPersonInfo.province != null){
-                provinceField.setText(receivedPersonInfo.province);
-            }
-        }
     }
 
     /**
-     * Using values entered by the user on the text fields, method checks if
-     * data is correct format.  Then updates the business on Firebase.
-     * @param v View of the current Activity.
+     * Used to take entered information, verify it using checkInformation.
+     * Sending correct information off to Firebase for adding to Database.
+     * @param v Current view of activity.
      */
-    public void updateBusiness(View v){
-        appData = (MyApplicationData)getApplication();
-        String number = numberField.getText().toString();
+    public void submitInfoButton(View v) {
+        String bID = appState.firebaseReference.push().getKey();//each entry needs a unique Id
+        String number = numberField.getText().toString(); //9-digit number
         String name = nameField.getText().toString(); // required 2-48 characters
         String primBusiness = primBusinessField.getText().toString(); // required {Fisher, Distributor, Processor, Fish Monger}
         String address = addressField.getText().toString(); //required < 50 characters
-        String province = provinceField.getText().toString(); // required { {AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT,““}
-        Business business = new Business(receivedPersonInfo.businessID, number, name, primBusiness, address, province);
+        String province = provinceField.getText().toString(); // required {AB, BC, MB, NB, NL, NS, NT, NU, ON, PE, QC, SK, YT,““}
+        Business business = new Business(bID, number, name, primBusiness, address, province);
 
-        if(checkInformation(business)){
-            appData.firebaseReference.child(receivedPersonInfo.businessID).setValue(business);
+        if(checkInformation(business)) {
+            appState.firebaseReference.child(bID).setValue(business);
             finish();
         } else {
+            //Let the user know they have to check information
             //let user know information is incorrect.
             Context context = getApplicationContext();
-            CharSequence text = "Invalid input when updating Business!";
+            CharSequence text = "Invalid input when creating Business!";
             int duration = Toast.LENGTH_SHORT;
 
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
         }
 
-    }
-
-    /**
-     * Using the reference of the business passed in, removes the value
-     * from Firebase.
-     * @param v View of the current activity.
-     */
-    public void eraseBusiness(View v)
-    {
-        //Get the app wide shared variables
-        appData = (MyApplicationData)getApplication();
-        if(receivedPersonInfo != null){
-            appData.firebaseReference.child(receivedPersonInfo.businessID).removeValue();
-        }
-        finish();
     }
 
     /**
@@ -129,5 +102,4 @@ public class DetailViewActivity extends Activity {
 
         return check;
     }
-
 }
