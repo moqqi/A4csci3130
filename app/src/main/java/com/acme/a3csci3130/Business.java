@@ -11,7 +11,6 @@ import java.util.Map;
  * Class that defines how the data will be stored in the
  * Firebase databse. This is converted to a JSON format
  */
-
 public class Business implements Serializable {
 
     public String businessID;
@@ -21,10 +20,21 @@ public class Business implements Serializable {
     public String address;
     public String province;
 
+    /**
+     * Default constructor required for calls to DataSnapshot.getValue
+     */
     public Business() {
-        // Default constructor required for calls to DataSnapshot.getValue
     }
 
+    /**
+     * Constructor for creating full business with all required information.
+     * @param bID Business ID
+     * @param number Business Number
+     * @param name Business Name
+     * @param primBusiness Primary Business of said Business
+     * @param address Business Address
+     * @param province Province/Territory that Business exists in.
+     */
     public Business(String bID, String number, String name, String primBusiness, String address, String province) {
         this.businessID = bID;
         this.number = number;
@@ -34,6 +44,10 @@ public class Business implements Serializable {
         this.province = province;
     }
 
+    /**
+     * Mapping required for adding attributes of Business for use on Firebase.
+     * @return Mapping of Name and Value.
+     */
     @Exclude
     public Map<String, Object> toMap(){
         HashMap<String, Object> result = new HashMap<>();
